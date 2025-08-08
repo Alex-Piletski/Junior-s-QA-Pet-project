@@ -5,7 +5,7 @@
   Настроить базовую структуру проекта:
     /frontend (HTML/CSS/JS)
     /backend (Flask)
-    /db (MySQL, docker-compose.yml)
+    /db (Postgres Render)
 
 2. Фронтенд (лендинг с тестируемыми элементами)
 
