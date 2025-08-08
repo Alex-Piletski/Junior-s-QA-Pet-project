@@ -19,3 +19,20 @@ span.onclick = () => modal.style.display = 'none';
 window.onclick = (e) => {
     if (e.target == modal) modal.style.display = 'none';
 }
+
+const registerBtn = document.getElementById('register-btn');
+const loginBtn = document.getElementById('login-btn');
+
+const registerForm = document.getElementById('register-form');
+const loginForm = document.getElementById('login-form');
+
+registerBtn.addEventListener('click', () => {
+  registerForm.style.display = 'flex';
+  loginForm.style.display = 'none';
+});
+
+loginBtn.addEventListener('click', () => {
+  loginForm.style.display = 'flex';
+  registerForm.style.display = 'none';
+});
+
