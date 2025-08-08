@@ -8,6 +8,22 @@
         <button id="register-btn">Регистрация</button>
         <button id="login-btn">Авторизация</button>
     </div>
+
+    <!-- Форма регистрации -->
+<form id="register-form" style="display:none;">
+  <input type="text" name="username" placeholder="Имя пользователя" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Пароль" required>
+  <input type="password" name="confirm_password" placeholder="Подтвердите пароль" required>
+  <button type="submit">Зарегистрироваться</button>
+</form>
+
+<!-- Форма авторизации -->
+<form id="login-form" style="display:none;">
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Пароль" required>
+  <button type="submit">Войти</button>
+</form>
     
     <!-- Форма обратной связи -->
     <form id="feedback-form">
