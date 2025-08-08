@@ -1,14 +1,9 @@
 from app import db
 
-# Пример заготовки (пока не создаёт таблицы в БД)
 class User(db.Model):
-    """Шаблон для таблицы пользователей"""
-    __tablename__ = 'users'  # Это имя таблицы в БД
-    
-    # Поля будут добавлены позже
-    pass
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
 
-class Product(db.Model):
-    """Шаблон для таблицы товаров"""
-    __tablename__ = 'products'
-    pass
+    def __repr__(self):
+        return f"<User {self.name}>"
+
