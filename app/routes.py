@@ -1,11 +1,12 @@
+from flask import Blueprint, render_template
+from . import db
 
-from app import app
-from flask import render_template
+bp = Blueprint('main', __name__)
 
-@app.route("/")
+@bp.route('/')
 def home():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/ping")
+@bp.route('/ping')
 def ping():
-    return {"status": "ok"}
+    return {'status': 'ok'}
