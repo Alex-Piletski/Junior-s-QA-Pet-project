@@ -1,15 +1,5 @@
-# Базовый образ Python
 FROM python:3.9-slim
-
-# Рабочая директория
 WORKDIR /app
-
-# Копируем зависимости и устанавливаем их
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt gunicorn  # Добавляем Gunicorn
-
-# Копируем весь проект
-COPY . .
-
-# Запускаем через Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5002", "--workers", "4", "app:app"]
+COPY . .  # Копируем ВСЕ файлы, включая requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["gunicorn", "--bind", "0.0.0.0:5002", "app:app"]
