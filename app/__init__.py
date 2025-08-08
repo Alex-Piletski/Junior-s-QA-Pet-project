@@ -2,4 +2,5 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from app import routes  # Импорт после создания app!
+# Импорт роутов ПОСЛЕ создания app
+from app import routes
