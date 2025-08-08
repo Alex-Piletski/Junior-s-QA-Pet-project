@@ -19,7 +19,3 @@ span.onclick = () => modal.style.display = 'none';
 window.onclick = (e) => {
     if (e.target == modal) modal.style.display = 'none';
 }
-
-// Динамический список
-const list = document.getElementById('dynamic-list');
-let counter = 3;
