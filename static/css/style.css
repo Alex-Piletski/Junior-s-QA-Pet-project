@@ -1,3 +1,22 @@
+/* Полная высота для корректного центрирования */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Основной контейнер — вертикальное центрирование и отступы */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* вертикальное центрирование */
+    align-items: center;     /* горизонтальное центрирование */
+    height: 100vh;           /* высота экрана */
+    gap: 15px;               /* отступы между блоками */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Шрифты и цвета для страницы */
 body {
     background-color: #FFFFFF;
     color: #000000;
@@ -5,13 +24,10 @@ body {
                  Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-form {
+/* Форма и кнопка — фиксированная максимальная ширина */
+form, #modal-btn {
+    width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -20,6 +36,8 @@ form {
 input, textarea {
     padding: 8px;
     border: 1px solid #ddd;
+    font-size: 16px;
+    font-family: inherit;
 }
 
 button {
@@ -28,8 +46,11 @@ button {
     color: #ffffff;      /* белый текст */
     border: none;
     cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
 }
 
+/* Модальное окно */
 .modal {
     display: none;
     position: fixed;
@@ -46,4 +67,5 @@ button {
     margin: 15% auto;
     padding: 20px;
     width: 80%;
+    max-width: 400px;
 }
