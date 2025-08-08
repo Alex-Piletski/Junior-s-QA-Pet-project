@@ -69,3 +69,23 @@ button {
     width: 80%;
     max-width: 400px;
 }
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 15px; /* небольшой отступ снизу */
+}
+
+.auth-buttons button {
+    flex: 1;
+    padding: 10px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+}
+
