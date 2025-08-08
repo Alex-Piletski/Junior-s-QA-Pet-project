@@ -23,9 +23,3 @@ window.onclick = (e) => {
 // Динамический список
 const list = document.getElementById('dynamic-list');
 let counter = 3;
-
-setInterval(() => {
-    const li = document.createElement('li');
-    li.textContent = `Элемент ${counter++}`;
-    list.appendChild(li);
-}, 3000);
