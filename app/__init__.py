@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -18,10 +17,8 @@ def create_app():
     
     db.init_app(app)
     
-    # Импорт роутов после инициализации
-    from . import routes
-    routes.init_app(app)
+    # Регистрация Blueprint
+    from .routes import bp
+    app.register_blueprint(bp)
     
     return app
-
-
