@@ -1,4 +1,6 @@
-Junior’s QA Pet project
+Junior’s QA Pet project 
+
+https://alex-piletski.github.io/Junior-s-QA-Pet-project/
 
 Requirements
 
