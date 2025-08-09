@@ -26,13 +26,21 @@ const loginBtn = document.getElementById('login-btn');
 const registerForm = document.getElementById('register-form');
 const loginForm = document.getElementById('login-form');
 
+// Новая логика: повторное нажатие скрывает форму
 registerBtn.addEventListener('click', () => {
-  registerForm.style.display = 'flex';
-  loginForm.style.display = 'none';
+  if (registerForm.style.display === 'flex') {
+    registerForm.style.display = 'none';
+  } else {
+    registerForm.style.display = 'flex';
+    loginForm.style.display = 'none';
+  }
 });
 
 loginBtn.addEventListener('click', () => {
-  loginForm.style.display = 'flex';
-  registerForm.style.display = 'none';
+  if (loginForm.style.display === 'flex') {
+    loginForm.style.display = 'none';
+  } else {
+    loginForm.style.display = 'flex';
+    registerForm.style.display = 'none';
+  }
 });
-
