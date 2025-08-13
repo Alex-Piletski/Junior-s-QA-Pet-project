@@ -195,25 +195,25 @@ def profile():
         
         current_user.about = sanitize_input(request.form.get("about", ""))
 
-        # Обработка аватарки
-        avatar_uploaded = False
-        if "avatar" in request.files:
-            avatar = request.files["avatar"]
-            if avatar.filename != "":
-                # Проверяем расширение файла
-                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
-                if '.' in avatar.filename and \
-                   avatar.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
-                filename = secure_filename(avatar.filename)
-                    avatar_path = os.path.join(UPLOAD_FOLDER, filename)
-                avatar.save(avatar_path)
-                    current_user.avatar_url = f"/{avatar_path}"
-                    avatar_uploaded = True
-                else:
-                    flash('Разрешены только изображения (png, jpg, jpeg, gif)', 'error')
-                    log_action("AVATAR_UPLOAD_FAILED", current_user.id, f"Invalid file type: {avatar.filename}")
+# Обработка аватарки
+avatar_uploaded = False
+if "avatar" in request.files:
+    avatar = request.files["avatar"]
+    if avatar.filename != "":
+        # Проверяем расширение файла
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+        if '.' in avatar.filename and \
+           avatar.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
+            filename = secure_filename(avatar.filename)
+            avatar_path = os.path.join(UPLOAD_FOLDER, filename)
+            avatar.save(avatar_path)
+            current_user.avatar_url = f"/{avatar_path}"
+            avatar_uploaded = True
+        else:
+            flash('Разрешены только изображения (png, jpg, jpeg, gif)', 'error')
+            log_action("AVATAR_UPLOAD_FAILED", current_user.id, f"Invalid file type: {avatar.filename}")
 
-        db.session.commit()
+db.session.commit()
         
         # Логируем изменения
         changes = []
