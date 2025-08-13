@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профиль</title>
+</head>
+<body>
+    <h1>Профиль пользователя</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label>Имя:</label>
+        <input type="text" name="first_name" value="{{ user.first_name }}"><br>
+
+        <label>Фамилия:</label>
+        <input type="text" name="last_name" value="{{ user.last_name }}"><br>
+
+        <label>Возраст:</label>
+        <input type="number" name="age" value="{{ user.age }}"><br>
+
+        <label>О себе:</label>
+        <textarea name="about">{{ user.about }}</textarea><br>
+
+        <label>Аватар:</label>
+        {% if user.avatar_url %}
+            <img src="{{ user.avatar_url }}" alt="Аватар" width="100"><br>
+            <a href="{{ url_for('delete_avatar') }}">Удалить аватар</a><br>
+        {% endif %}
+        <input type="file" name="avatar"><br><br>
+
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>
