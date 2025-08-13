@@ -5,9 +5,11 @@ import os
 db = SQLAlchemy()
 
 def create_app():
-    app = Flask(__name__,
-            template_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates')),
-            static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static')))
+    app = Flask(
+        __name__,
+        template_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates')),
+        static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+    )
     
     # Настройка БД
     db_url = os.getenv('DATABASE_URL', 'sqlite:///temp.db')
@@ -24,3 +26,7 @@ def create_app():
     app.register_blueprint(bp)
     
     return app
+
+# Создаём объект app сразу для Render/Gunicorn
+app = create_app()
+
