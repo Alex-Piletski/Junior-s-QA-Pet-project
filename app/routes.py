@@ -196,40 +196,43 @@ def profile():
         current_user.about = sanitize_input(request.form.get("about", ""))
 
 # Обработка аватарки
-avatar_uploaded = False
-if "avatar" in request.files:
-    avatar = request.files["avatar"]
-    if avatar.filename != "":
-        # Проверяем расширение файла
-        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
-        if '.' in avatar.filename and \
-           avatar.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
-            filename = secure_filename(avatar.filename)
-            avatar_path = os.path.join(UPLOAD_FOLDER, filename)
-            avatar.save(avatar_path)
-            current_user.avatar_url = f"/{avatar_path}"
-            avatar_uploaded = True
-        else:
-            flash('Разрешены только изображения (png, jpg, jpeg, gif)', 'error')
-            log_action("AVATAR_UPLOAD_FAILED", current_user.id, f"Invalid file type: {avatar.filename}")
+    avatar_uploaded = False
+    if "avatar" in request.files:
+        avatar = request.files["avatar"]
+        if avatar.filename != "":
+            # Проверяем расширение файла
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            if '.' in avatar.filename and \
+               avatar.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
+                filename = secure_filename(avatar.filename)
+                avatar_path = os.path.join(UPLOAD_FOLDER, filename)
+                avatar.save(avatar_path)
+                current_user.avatar_url = f"/{avatar_path}"
+                avatar_uploaded = True
+            else:
+                flash('Разрешены только изображения (png, jpg, jpeg, gif)', 'error')
+                log_action("AVATAR_UPLOAD_FAILED", current_user.id,
+                           f"Invalid file type: {avatar.filename}")
+
+    db.session.commit()
 
 db.session.commit()
         
         # Логируем изменения
-        changes = []
-        for field, old_value in old_data.items():
-            new_value = getattr(current_user, field)
-            if old_value != new_value:
-                changes.append(f"{field}: {old_value} -> {new_value}")
-        
-        if changes:
-            log_action("PROFILE_UPDATED", current_user.id, f"Changes: {', '.join(changes)}")
-        
-        if avatar_uploaded:
-            log_action("AVATAR_UPLOADED", current_user.id, f"New avatar: {filename}")
-        
-        flash(get_text('profile_updated'), 'success')
-        return redirect(url_for("main.profile"))
+    changes = []
+    for field, old_value in old_data.items():
+        new_value = getattr(current_user, field)
+        if old_value != new_value:
+            changes.append(f"{field}: {old_value} -> {new_value}")
+
+    if changes:
+        log_action("PROFILE_UPDATED", current_user.id, f"Changes: {', '.join(changes)}")
+
+    if avatar_uploaded:
+        log_action("AVATAR_UPLOADED", current_user.id, f"New avatar: {filename}")
+
+    flash(get_text('profile_updated'), 'success')
+    return redirect(url_for("main.profile"))
 
     return render_template("profile.html", user=current_user)
 
