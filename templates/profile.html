@@ -1,31 +1,112 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Профиль</title>
-</head>
-<body>
-    <h1>Профиль пользователя</h1>
-    <form method="POST" enctype="multipart/form-data">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .logout-btn {
+        background: #ff4444;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      input,
+      textarea {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .avatar {
+        max-width: 100px;
+        border-radius: 50%;
+      }
+      .flash {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      .flash.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Профиль пользователя</h1>
+        <a href="{{ url_for('main.logout') }}" class="logout-btn">Выйти</a>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <form method="POST" enctype="multipart/form-data">
+        <label>Email:</label>
+        <input type="email" value="{{ user.email }}" disabled />
+
         <label>Имя:</label>
-        <input type="text" name="first_name" value="{{ user.first_name }}"><br>
+        <input
+          type="text"
+          name="first_name"
+          value="{{ user.first_name or '' }}"
+        />
 
         <label>Фамилия:</label>
-        <input type="text" name="last_name" value="{{ user.last_name }}"><br>
+        <input
+          type="text"
+          name="last_name"
+          value="{{ user.last_name or '' }}"
+        />
 
         <label>Возраст:</label>
-        <input type="number" name="age" value="{{ user.age }}"><br>
+        <input type="number" name="age" value="{{ user.age or '' }}" />
 
         <label>О себе:</label>
-        <textarea name="about">{{ user.about }}</textarea><br>
+        <textarea name="about" rows="4">{{ user.about or '' }}</textarea>
+
+        <label>Роль:</label>
+        <input type="text" value="{{ user.role }}" disabled />
 
         <label>Аватар:</label>
         {% if user.avatar_url %}
-            <img src="{{ user.avatar_url }}" alt="Аватар" width="100"><br>
-            <a href="{{ url_for('delete_avatar') }}">Удалить аватар</a><br>
+        <img src="{{ user.avatar_url }}" alt="Аватар" class="avatar" /><br />
+        <a href="{{ url_for('main.delete_avatar') }}">Удалить аватар</a><br />
         {% endif %}
-        <input type="file" name="avatar"><br><br>
+        <input type="file" name="avatar" accept="image/*" /><br /><br />
 
         <button type="submit">Сохранить</button>
-    </form>
-</body>
+      </form>
+    </div>
+  </body>
 </html>

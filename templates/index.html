@@ -1,47 +1,63 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container">
-    
-     <!-- Кнопки Регистрация и Авторизация сверху -->
-    <div class="auth-buttons">
-        <button id="register-btn">Регистрация</button>
-        <button id="login-btn">Авторизация</button>
+  {% if current_user.is_authenticated %}
+  <!-- Если пользователь авторизован -->
+  <div class="auth-status">
+    <p>Добро пожаловать, {{ current_user.email }}!</p>
+    <a href="{{ url_for('main.profile') }}" class="profile-link">Мой профиль</a>
+    <a href="{{ url_for('main.logout') }}" class="logout-link">Выйти</a>
+  </div>
+  {% else %}
+  <!-- Если пользователь не авторизован -->
+  <div class="auth-buttons">
+    <button id="register-btn">Регистрация</button>
+    <button id="login-btn">Авторизация</button>
+  </div>
+
+  <!-- Форма регистрации -->
+  <form id="register-form" style="display: none">
+    <input
+      type="text"
+      name="username"
+      placeholder="Имя пользователя"
+      required
+    />
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Пароль" required />
+    <input
+      type="password"
+      name="confirm_password"
+      placeholder="Подтвердите пароль"
+      required
+    />
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+
+  <!-- Форма авторизации -->
+  <form id="login-form" style="display: none">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Пароль" required />
+    <button type="submit">Войти</button>
+  </form>
+  {% endif %}
+
+  <!-- Форма обратной связи -->
+  <form id="feedback-form">
+    <input type="text" name="name" placeholder="Имя" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <textarea name="message" placeholder="Сообщение" required></textarea>
+    <button type="submit">Отправить</button>
+  </form>
+
+  <!-- Кнопка для модального окна -->
+  <button id="modal-btn">Открыть модальное окно</button>
+
+  <!-- Модальное окно -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Это модальное окно!</p>
     </div>
-
-    <!-- Форма регистрации -->
-<form id="register-form" style="display:none;">
-  <input type="text" name="username" placeholder="Имя пользователя" required>
-  <input type="email" name="email" placeholder="Email" required>
-  <input type="password" name="password" placeholder="Пароль" required>
-  <input type="password" name="confirm_password" placeholder="Подтвердите пароль" required>
-  <button type="submit">Зарегистрироваться</button>
-</form>
-
-<!-- Форма авторизации -->
-<form id="login-form" style="display:none;">
-  <input type="email" name="email" placeholder="Email" required>
-  <input type="password" name="password" placeholder="Пароль" required>
-  <button type="submit">Войти</button>
-</form>
-    
-    <!-- Форма обратной связи -->
-    <form id="feedback-form">
-        <input type="text" name="name" placeholder="Имя" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <textarea name="message" placeholder="Сообщение" required></textarea>
-        <button type="submit">Отправить</button>
-    </form>
-    
-    <!-- Кнопка для модального окна -->
-    <button id="modal-btn">Открыть модальное окно</button>
-
-    <!-- Модальное окно -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>Это модальное окно!</p>
-        </div>
-    </div>
+  </div>
 </div>
 {% endblock %}

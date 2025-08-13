@@ -1,6 +1,15 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+from app import db
+import os
 
 bp = Blueprint('main', __name__)
+
+# Папка для хранения аватарок
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @bp.route('/')
 def home():
@@ -10,50 +19,106 @@ def home():
 def ping():
     return {'status': 'ok'}
 
-import os
-from flask import render_template, request, redirect, url_for
-from werkzeug.utils import secure_filename
-from app import app, db
-from app.models import User
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        email = data.get('email')
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
+        
+        # Проверка данных
+        if not email or not password:
+            return jsonify({'error': 'Email и пароль обязательны'}), 400
+        
+        if password != confirm_password:
+            return jsonify({'error': 'Пароли не совпадают'}), 400
+        
+        User = current_app.User
+        if User.query.filter_by(email=email).first():
+            return jsonify({'error': 'Пользователь с таким email уже существует'}), 400
+        
+        # Создание пользователя с базовыми данными
+        user = User(
+            email=email,
+            first_name='Новый пользователь',
+            last_name='',
+            age=0,
+            avatar_url='',
+            role='user',
+            password_hash=generate_password_hash(password)
+        )
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        return jsonify({'message': 'Регистрация успешна! Теперь войдите в систему.'}), 200
+    
+    return render_template('index.html')
 
-# Папка для хранения аватарок
-UPLOAD_FOLDER = "static/uploads"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not email or not password:
+            return jsonify({'error': 'Email и пароль обязательны'}), 400
+        
+        User = current_app.User
+        user = User.query.filter_by(email=email).first()
+        
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            return jsonify({'message': 'Вход выполнен успешно!', 'redirect': '/profile'}), 200
+        else:
+            return jsonify({'error': 'Неверный email или пароль'}), 400
+    
+    return render_template('index.html')
 
-@app.route("/profile", methods=["GET", "POST"])
+@bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.home'))
+
+@bp.route('/profile', methods=['GET', 'POST'])
+@login_required
 def profile():
-    user = User.query.first()  # пока один тестовый пользователь
-
-    if request.method == "POST":
+    if request.method == 'POST':
         # Обновляем данные профиля
-        user.first_name = request.form.get("first_name")
-        user.last_name = request.form.get("last_name")
-        user.age = request.form.get("age")
-        user.about = request.form.get("about")
+        current_user.first_name = request.form.get("first_name")
+        current_user.last_name = request.form.get("last_name")
+        current_user.age = request.form.get("age")
+        current_user.about = request.form.get("about")
 
         # Обработка аватарки
         if "avatar" in request.files:
             avatar = request.files["avatar"]
             if avatar.filename != "":
                 filename = secure_filename(avatar.filename)
-                avatar_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                avatar_path = os.path.join(UPLOAD_FOLDER, filename)
                 avatar.save(avatar_path)
-                user.avatar_url = f"/{avatar_path}"
+                current_user.avatar_url = f"/{avatar_path}"
 
         db.session.commit()
-        return redirect(url_for("profile"))
+        flash('Профиль обновлен!', 'success')
+        return redirect(url_for("main.profile"))
 
-    return render_template("profile.html", user=user)
+    return render_template("profile.html", user=current_user)
 
-@app.route("/delete_avatar")
+@bp.route('/delete_avatar')
+@login_required
 def delete_avatar():
-    user = User.query.first()
-    if user and user.avatar_url:
-        file_path = user.avatar_url.lstrip("/")
+    if current_user.avatar_url:
+        file_path = current_user.avatar_url.lstrip("/")
         if os.path.exists(file_path):
             os.remove(file_path)
-        user.avatar_url = None
+        current_user.avatar_url = ""
         db.session.commit()
-    return redirect(url_for("profile"))
+        flash('Аватар удален!', 'success')
+    return redirect(url_for("main.profile"))
 
