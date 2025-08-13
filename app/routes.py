@@ -45,3 +45,15 @@ def profile():
         return redirect(url_for("profile"))
 
     return render_template("profile.html", user=user)
+
+@app.route("/delete_avatar")
+def delete_avatar():
+    user = User.query.first()
+    if user and user.avatar_url:
+        file_path = user.avatar_url.lstrip("/")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        user.avatar_url = None
+        db.session.commit()
+    return redirect(url_for("profile"))
+
