@@ -1,112 +1,371 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Профиль</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-      .logout-btn {
-        background: #ff4444;
-        color: white;
-        padding: 10px 20px;
-        text-decoration: none;
-        border-radius: 5px;
-      }
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      input,
-      textarea {
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      button {
-        background: #007bff;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .avatar {
-        max-width: 100px;
-        border-radius: 50%;
-      }
-      .flash {
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 4px;
-      }
-      .flash.success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>Профиль пользователя</h1>
-        <a href="{{ url_for('main.logout') }}" class="logout-btn">Выйти</a>
+{% extends "base.html" %} {% block title %}Профиль - QA Pet Project{% endblock
+%} {% block extra_css %}
+<style>
+  .container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow);
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-light);
+  }
+
+  .profile-header h1 {
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .profile-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--text-primary);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--btn-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  .form-group input:disabled {
+    background-color: var(--bg-tertiary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  .avatar-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+  }
+
+  .avatar-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--border-color);
+    margin-bottom: 15px;
+  }
+
+  .avatar-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 4px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: var(--text-muted);
+    margin: 0 auto 15px;
+  }
+
+  .avatar-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background-color: var(--btn-primary);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+  }
+
+  .btn-danger {
+    background-color: var(--btn-danger);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: var(--btn-danger-hover);
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-tertiary);
+  }
+
+  .admin-links {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 8px;
+  }
+
+  .admin-links h3 {
+    color: var(--warning-text);
+    margin-bottom: 15px;
+  }
+
+  .admin-links a {
+    color: var(--warning-text);
+    text-decoration: none;
+    padding: 8px 16px;
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .admin-links a:hover {
+    background-color: var(--warning-border);
+  }
+
+  .flash-messages {
+    margin-bottom: 20px;
+  }
+
+  .flash-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 1px solid;
+  }
+
+  .flash-success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
+  }
+
+  .flash-error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border-color: var(--error-border);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 8px 16px;
+    background-color: var(--bg-tertiary);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .back-link:hover {
+    background-color: var(--bg-secondary);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container">
+  <a href="{{ url_for('main.home') }}" class="back-link">← Назад на главную</a>
+
+  <!-- Flash сообщения -->
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
+
+  <div class="profile-header">
+    <h1>Мой профиль</h1>
+    <p>Управление личной информацией и настройками</p>
+  </div>
+
+  <div class="profile-form">
+    <form method="POST" enctype="multipart/form-data">
+      <!-- Секция аватара -->
+      <div class="avatar-section">
+        <h3>Аватар</h3>
+        {% if user.avatar_url %}
+        <img src="{{ user.avatar_url }}" alt="Аватар" class="avatar-image" />
+        {% else %}
+        <div class="avatar-placeholder">👤</div>
+        {% endif %}
+        <div class="avatar-actions">
+          <input
+            type="file"
+            name="avatar"
+            accept="image/*"
+            id="avatar-input"
+            style="display: none"
+          />
+          <label for="avatar-input" class="btn btn-primary"
+            >Загрузить аватар</label
+          >
+          {% if user.avatar_url %}
+          <a
+            href="{{ url_for('main.delete_avatar') }}"
+            class="btn btn-danger"
+            onclick="return confirm('Удалить аватар?')"
+            >Удалить аватар</a
+          >
+          {% endif %}
+        </div>
       </div>
 
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
+      <!-- Основная информация -->
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="{{ user.email }}" disabled />
+      </div>
 
-      <form method="POST" enctype="multipart/form-data">
-        <label>Email:</label>
-        <input type="email" value="{{ user.email }}" disabled />
-
-        <label>Имя:</label>
+      <div class="form-group">
+        <label for="first_name">Имя:</label>
         <input
           type="text"
+          id="first_name"
           name="first_name"
           value="{{ user.first_name or '' }}"
+          required
         />
+      </div>
 
-        <label>Фамилия:</label>
+      <div class="form-group">
+        <label for="last_name">Фамилия:</label>
         <input
           type="text"
+          id="last_name"
           name="last_name"
           value="{{ user.last_name or '' }}"
+          required
         />
+      </div>
 
-        <label>Возраст:</label>
-        <input type="number" name="age" value="{{ user.age or '' }}" />
+      <div class="form-group">
+        <label for="age">Возраст:</label>
+        <input
+          type="number"
+          id="age"
+          name="age"
+          value="{{ user.age or '' }}"
+          min="0"
+          max="150"
+          required
+        />
+      </div>
 
-        <label>О себе:</label>
-        <textarea name="about" rows="4">{{ user.about or '' }}</textarea>
+      <div class="form-group">
+        <label for="about">О себе:</label>
+        <textarea id="about" name="about" rows="4" maxlength="300">
+{{ user.about or '' }}</textarea
+        >
+        <small style="color: var(--text-muted)">Максимум 300 символов</small>
+      </div>
 
-        <label>Роль:</label>
-        <input type="text" value="{{ user.role }}" disabled />
+      <div class="form-group">
+        <label for="role">Роль:</label>
+        <input type="text" id="role" value="{{ user.role }}" disabled />
+      </div>
 
-        <label>Аватар:</label>
-        {% if user.avatar_url %}
-        <img src="{{ user.avatar_url }}" alt="Аватар" class="avatar" /><br />
-        <a href="{{ url_for('main.delete_avatar') }}">Удалить аватар</a><br />
-        {% endif %}
-        <input type="file" name="avatar" accept="image/*" /><br /><br />
+      <div style="text-align: center; margin-top: 30px">
+        <button type="submit" class="btn btn-primary">
+          Сохранить изменения
+        </button>
+      </div>
+    </form>
 
-        <button type="submit">Сохранить</button>
-      </form>
+    <!-- Административные функции -->
+    {% if user.role == 'admin' %}
+    <div class="admin-links">
+      <h3>Административные функции</h3>
+      <a href="{{ url_for('main.download_logs') }}"
+        >📥 Скачать логи приложения</a
+      >
+      <a href="{{ url_for('main.rate_limit_info') }}"
+        >🚦 Информация о Rate Limiting</a
+      >
+      <a href="{{ url_for('main.performance_monitor') }}"
+        >📊 Мониторинг производительности</a
+      >
     </div>
-  </body>
-</html>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Показ выбранного файла аватара
+  document
+    .getElementById("avatar-input")
+    .addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const avatarImage = document.querySelector(".avatar-image");
+          const avatarPlaceholder = document.querySelector(
+            ".avatar-placeholder"
+          );
+
+          if (avatarImage) {
+            avatarImage.src = e.target.result;
+          } else if (avatarPlaceholder) {
+            avatarPlaceholder.style.display = "none";
+            const newImage = document.createElement("img");
+            newImage.src = e.target.result;
+            newImage.alt = "Аватар";
+            newImage.className = "avatar-image";
+            avatarPlaceholder.parentNode.insertBefore(
+              newImage,
+              avatarPlaceholder
+            );
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+</script>
+{% endblock %}

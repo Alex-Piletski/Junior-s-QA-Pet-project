@@ -1,11 +1,35 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Feedback Form</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+<html lang="{{ get_locale() }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}QA Pet Project{% endblock %}</title>
+
+    <!-- Подключение CSS тем -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/themes.css') }}"
+    />
+
+    <!-- Дополнительные стили -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- Подключение JavaScript для тем -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    
+    <!-- Подключение JavaScript для локализации -->
+    <script src="{{ url_for('static', filename='js/locale.js') }}"></script>
+    
+    <!-- Подключение JavaScript для обработки ошибок -->
+    <script src="{{ url_for('static', filename='js/error_handler.js') }}"></script>
+
+    <!-- Дополнительные скрипты -->
+    {% block extra_js %}{% endblock %}
+  </head>
+  <body>
     {% block content %}{% endblock %}
+
+    <!-- Основной JavaScript -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+  </body>
 </html>

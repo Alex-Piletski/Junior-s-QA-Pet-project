@@ -1,63 +1,271 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block title %}{{ get_text('home') }} - QA Pet Project{% endblock %} {% block extra_css %}
+<style>
+  .container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow);
+  }
+
+  .auth-status {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    border-left: 4px solid var(--btn-primary);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+  }
+
+  .nav-links a {
+    padding: 10px 20px;
+    background-color: var(--btn-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .nav-links a:hover {
+    background-color: var(--btn-primary-hover);
+  }
+
+  .auth-buttons {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .auth-buttons button {
+    margin: 0 10px;
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  #register-form,
+  #login-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    display: none;
+  }
+
+  #register-form.show,
+  #login-form.show {
+    display: block;
+  }
+
+  #feedback-form {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-primary);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    box-sizing: border-box;
+  }
+
+  .form-group textarea {
+    height: 100px;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--btn-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: var(--bg-primary);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: var(--shadow);
+  }
+
+  .close {
+    color: var(--text-muted);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close:hover {
+    color: var(--text-primary);
+  }
+
+  .theme-info {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-radius: 8px;
+    border: 1px solid var(--info-border);
+  }
+
+  .locale-info {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border-radius: 8px;
+    border: 1px solid var(--success-border);
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="container">
   {% if current_user.is_authenticated %}
   <!-- Если пользователь авторизован -->
   <div class="auth-status">
-    <p>Добро пожаловать, {{ current_user.email }}!</p>
-    <a href="{{ url_for('main.profile') }}" class="profile-link">Мой профиль</a>
-    <a href="{{ url_for('main.logout') }}" class="logout-link">Выйти</a>
+    <h2>{{ get_text('welcome') }}, {{ current_user.email }}!</h2>
+    <p>{{ get_text('info') }}</p>
+    <div class="nav-links">
+      <a href="{{ url_for('main.profile') }}">{{ get_text('profile') }}</a>
+      <a href="{{ url_for('main.notes') }}">{{ get_text('notes') }}</a>
+      <a href="{{ url_for('main.logout') }}">{{ get_text('logout') }}</a>
+    </div>
   </div>
   {% else %}
   <!-- Если пользователь не авторизован -->
   <div class="auth-buttons">
-    <button id="register-btn">Регистрация</button>
-    <button id="login-btn">Авторизация</button>
+    <button id="register-btn">{{ get_text('register') }}</button>
+    <button id="login-btn">{{ get_text('login') }}</button>
   </div>
 
   <!-- Форма регистрации -->
-  <form id="register-form" style="display: none">
-    <input
-      type="text"
-      name="username"
-      placeholder="Имя пользователя"
-      required
-    />
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Пароль" required />
-    <input
-      type="password"
-      name="confirm_password"
-      placeholder="Подтвердите пароль"
-      required
-    />
-    <button type="submit">Зарегистрироваться</button>
+  <form id="register-form">
+    <h3>{{ get_text('register') }}</h3>
+    <div class="form-group">
+      <label for="register-username">{{ get_text('username') }}:</label>
+      <input type="text" id="register-username" name="username" required />
+    </div>
+    <div class="form-group">
+      <label for="register-email">{{ get_text('email') }}:</label>
+      <input type="email" id="register-email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label for="register-password">{{ get_text('password') }}:</label>
+      <input type="password" id="register-password" name="password" required />
+    </div>
+    <div class="form-group">
+      <label for="register-confirm-password">{{ get_text('confirm_password') }}:</label>
+      <input
+        type="password"
+        id="register-confirm-password"
+        name="confirm_password"
+        required
+      />
+    </div>
+    <button type="submit">{{ get_text('register') }}</button>
   </form>
 
   <!-- Форма авторизации -->
-  <form id="login-form" style="display: none">
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Пароль" required />
-    <button type="submit">Войти</button>
+  <form id="login-form">
+    <h3>{{ get_text('login') }}</h3>
+    <div class="form-group">
+      <label for="login-email">{{ get_text('email') }}:</label>
+      <input type="email" id="login-email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label for="login-password">{{ get_text('password') }}:</label>
+      <input type="password" id="login-password" name="password" required />
+    </div>
+    <button type="submit">{{ get_text('login') }}</button>
   </form>
   {% endif %}
 
   <!-- Форма обратной связи -->
   <form id="feedback-form">
-    <input type="text" name="name" placeholder="Имя" required />
-    <input type="email" name="email" placeholder="Email" required />
-    <textarea name="message" placeholder="Сообщение" required></textarea>
-    <button type="submit">Отправить</button>
+    <h3>{{ get_text('feedback') }}</h3>
+    <div class="form-group">
+      <label for="feedback-name">{{ get_text('feedback_name') }}:</label>
+      <input type="text" id="feedback-name" name="name" required />
+    </div>
+    <div class="form-group">
+      <label for="feedback-email">{{ get_text('email') }}:</label>
+      <input type="email" id="feedback-email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label for="feedback-message">{{ get_text('feedback_message') }}:</label>
+      <textarea id="feedback-message" name="message" required></textarea>
+    </div>
+    <button type="submit">{{ get_text('send_feedback') }}</button>
   </form>
 
   <!-- Кнопка для модального окна -->
-  <button id="modal-btn">Открыть модальное окно</button>
+  <div style="text-align: center; margin-top: 30px">
+    <button id="modal-btn">{{ get_text('open_modal') }}</button>
+  </div>
 
   <!-- Модальное окно -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <p>Это модальное окно!</p>
+      <h3>{{ get_text('modal_demo') }}</h3>
+      <p>{{ get_text('modal_theme_demo') }}</p>
+      <p>{{ get_text('modal_theme_tip') }}</p>
     </div>
+  </div>
+
+  <!-- Информация о темах -->
+  <div class="theme-info">
+    <h4>🎨 {{ get_text('theme_system') }}</h4>
+    <p>{{ get_text('theme_info') }}</p>
+    <p>{{ get_text('theme_saved') }}</p>
+  </div>
+
+  <!-- Информация о локализации -->
+  <div class="locale-info">
+    <h4>🌍 {{ get_text('language') }}</h4>
+    <p>{{ get_text('switch_language') }}: 🇷🇺 / 🇺🇸</p>
+    <p>{{ get_text('locale_info') }}</p>
   </div>
 </div>
 {% endblock %}
